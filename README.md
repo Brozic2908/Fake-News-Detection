@@ -49,6 +49,20 @@ source venv/bin/activate  # Trên Windows: venv\Scripts\activate
 
 # Cài đặt thư viện
 pip install -r requirements.txt
+
+# Bước 1: Tiền xử lý (một lần duy nhất)
+python preprocess.py
+
+# Bước 2: Test DataLoader
+python dataset/data_loader.py
+
+# Bước 3: Test Model forward pass
+python models/fake_news_model.py
+
+# Bước 4: Train (WandB sẽ hỏi login lần đầu)
+python train.py --model distilbert-base-uncased --epochs 4
+# hoặc dùng RoBERTa
+python train.py --model roberta-base --epochs 5 --lr 2e-5
 ```
 
 **2. Quy trình chạy script**
