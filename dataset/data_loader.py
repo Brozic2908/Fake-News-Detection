@@ -40,10 +40,17 @@ class FakeNewsDataset(Dataset):
 def clean_text(text):
     if pd.isna(text):
         return ""
-    text = str(text).strip()
-    text = re.sub(r"\s+", " ", text)
+    text = str(text)
+    text = text.replace("\n", " ").replace("\r", " ").replace("\t", " ")
+    text = re.sub(r"\s+", " ", text).strip()
+
     return text
 
+def clean_title(title):
+    title = clean_text(title)
+    if title.lower() == "no title":
+        return ""
+    return title
 
 def standardize_columns(df):
     rename_map = {}
@@ -78,26 +85,37 @@ def preprocess_dataframe(df, split_name="dataset"):
     df = standardize_columns(df)
     df = df[["title", "text", "label"]].copy()
 
-    df["title"] = df["title"].apply(clean_text)
+    # Làm sạch title/text
+    df["title"] = df["title"].apply(clean_title)
     df["text"] = df["text"].apply(clean_text)
 
-    # Gộp title + text thành content
-    df["content"] = (df["title"] + " " + df["text"]).str.strip()
-    df["content"] = df["content"].apply(lambda x: re.sub(r"\s+", " ", x))
+    df = df[(df["title"] != "") & (df["text"] != "")].copy()
 
-    # Làm sạch label
+    # Tạo content
+    df["content"] = (df["title"] + " " + df["text"]).str.strip()
+    df["content"] = df["content"].apply(clean_text)
+
+    # Clean label
     df["label"] = pd.to_numeric(df["label"], errors="coerce")
     df = df.dropna(subset=["label"])
     df["label"] = df["label"].astype(int)
     df = df[df["label"].isin([0, 1])]
 
-    # Bỏ content rỗng
+    # Loại dòng content rỗng
     df = df[df["content"] != ""]
 
-    # Bỏ trùng theo content
+    # Bỏ duplicate theo content
     before_dedup = len(df)
     df = df.drop_duplicates(subset=["content"]).reset_index(drop=True)
     removed_dup = before_dedup - len(df)
+
+    # Ép sạch lần cuối để tránh NaN lọt vào file CSV
+    df["title"] = df["title"].fillna("").apply(clean_text)
+    df["text"] = df["text"].fillna("").apply(clean_text)
+    df["content"] = df["content"].fillna("").apply(clean_text)
+
+    # Nếu sau khi fill/clean mà content rỗng thì bỏ tiếp
+    df = df[df["content"] != ""].reset_index(drop=True)
 
     print("Cleaned shape:", df.shape)
     print("Removed duplicates:", removed_dup)
@@ -105,11 +123,12 @@ def preprocess_dataframe(df, split_name="dataset"):
     print(df["label"].value_counts())
 
     # Thống kê độ dài
-    df["word_count"] = df["content"].apply(lambda x: len(x.split()))
+    df["word_count"] = df["content"].apply(lambda x: len(str(x).split()))
     print("Word count stats:")
     print(df["word_count"].describe())
 
-    return df
+    # Chỉ giữ các cột cần thiết khi trả về
+    return df[["title", "text", "content", "label"]].copy()
 
 
 def load_parquet_splits(data_dir):
@@ -128,25 +147,59 @@ def load_parquet_splits(data_dir):
     return train_df, val_df, test_df
 
 
+def validate_processed_dataframe(df, split_name="dataset"):
+    # Ép sạch thêm lần cuối trước khi lưu
+    df["title"] = df["title"].fillna("").apply(clean_text)
+    df["text"] = df["text"].fillna("").apply(clean_text)
+    df["content"] = df["content"].fillna("").apply(clean_text)
+    df["label"] = pd.to_numeric(df["label"], errors="coerce")
+
+    # Bỏ label lỗi nếu có
+    df = df.dropna(subset=["label"]).copy()
+    df["label"] = df["label"].astype(int)
+    df = df[df["label"].isin([0, 1])].copy()
+
+    # Bỏ content rỗng
+    df = df[df["content"] != ""].copy()
+
+    # Kiểm tra lại
+    missing = df[["title", "text", "content", "label"]].isnull().sum()
+    if missing.sum() > 0:
+        raise ValueError(f"[{split_name}] Vẫn còn missing values sau validate:\n{missing}")
+
+    return df.reset_index(drop=True)
+
+
 def save_processed_data(train_df, val_df, test_df, output_dir="data/processed"):
     os.makedirs(output_dir, exist_ok=True)
 
-    train_save = train_df[["title", "text", "content", "label"]].copy()
-    val_save = val_df[["title", "text", "content", "label"]].copy()
-    test_save = test_df[["title", "text", "content", "label"]].copy()
+    train_df = validate_processed_dataframe(train_df, "train")
+    val_df = validate_processed_dataframe(val_df, "validation")
+    test_df = validate_processed_dataframe(test_df, "test")
 
     train_path = os.path.join(output_dir, "train_clean.csv")
     val_path = os.path.join(output_dir, "validation_clean.csv")
     test_path = os.path.join(output_dir, "test_clean.csv")
 
-    train_save.to_csv(train_path, index=False, encoding="utf-8-sig")
-    val_save.to_csv(val_path, index=False, encoding="utf-8-sig")
-    test_save.to_csv(test_path, index=False, encoding="utf-8-sig")
+    train_df.to_csv(train_path, index=False, encoding="utf-8-sig")
+    val_df.to_csv(val_path, index=False, encoding="utf-8-sig")
+    test_df.to_csv(test_path, index=False, encoding="utf-8-sig")
 
     print("\n===== SAVED PROCESSED CSV FILES =====")
     print("Train:", train_path)
     print("Validation:", val_path)
     print("Test:", test_path)
+
+    # Kiểm tra nhanh sau khi lưu
+    for path, name in [
+        (train_path, "train"),
+        (val_path, "validation"),
+        (test_path, "test")
+    ]:
+        check_df = pd.read_csv(path)
+        missing = check_df[["title", "text", "content", "label"]].isnull().sum()
+        print(f"\nPost-save missing check [{name}]:")
+        print(missing)
 
 
 def get_dataloaders(
@@ -164,7 +217,6 @@ def get_dataloaders(
     val_df = preprocess_dataframe(raw_val_df, split_name="validation")
     test_df = preprocess_dataframe(raw_test_df, split_name="test")
 
-    # Lưu dữ liệu đã tiền xử lý ra file CSV
     if save_csv:
         save_processed_data(train_df, val_df, test_df, output_dir=output_dir)
 
