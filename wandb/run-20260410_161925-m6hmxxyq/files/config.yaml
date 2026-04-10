@@ -1,0 +1,93 @@
+_wandb:
+    value:
+        cli_version: 0.25.1
+        e:
+            e5i3ukuvsbmse9ulnkjk6nyar1o2llfb:
+                codePath: train.py
+                codePathLocal: train.py
+                cpu_count: 6
+                cpu_count_logical: 12
+                cudaVersion: "13.0"
+                disk:
+                    /:
+                        total: "510852591616"
+                        used: "315377434624"
+                email: nlqk2908@gmail.com
+                executable: C:\1_Workspace\4_Nam_4\2_HocKy_252\4_DL\2_BTL\Fake-News\venv\Scripts\python.exe
+                git:
+                    commit: 978d87c0caf795afb0509d887262fe835c6bc52c
+                    remote: https://github.com/Brozic2908/Fake-News.git
+                gpu: NVIDIA GeForce RTX 3050 Laptop GPU
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 2048
+                      memoryTotal: "4294967296"
+                      name: NVIDIA GeForce RTX 3050 Laptop GPU
+                      uuid: GPU-6264e186-479d-13cc-ec80-99df64eec5d0
+                host: LAPTOP-BE44K422
+                memory:
+                    total: "33656905728"
+                os: Windows-10-10.0.26200-SP0
+                program: C:\1_Workspace\4_Nam_4\2_HocKy_252\4_DL\2_BTL\Fake-News\train.py
+                python: CPython 3.11.9
+                root: C:\1_Workspace\4_Nam_4\2_HocKy_252\4_DL\2_BTL\Fake-News
+                startedAt: "2026-04-10T09:19:25.195722Z"
+                writerId: e5i3ukuvsbmse9ulnkjk6nyar1o2llfb
+        m: []
+        python_version: 3.11.9
+        t:
+            "1":
+                - 1
+                - 5
+                - 11
+                - 49
+                - 53
+                - 71
+            "2":
+                - 1
+                - 5
+                - 11
+                - 41
+                - 49
+                - 53
+                - 71
+            "3":
+                - 1
+                - 13
+                - 16
+            "4": 3.11.9
+            "5": 0.25.1
+            "6": 5.5.3
+            "8":
+                - 3
+            "12": 0.25.1
+            "13": windows-amd64
+batch_size:
+    value: 32
+ckpt_dir:
+    value: checkpoints
+dropout:
+    value: 0.3
+epochs:
+    value: 1
+freeze_base:
+    value: false
+lr:
+    value: 2e-05
+max_len:
+    value: 256
+model:
+    value: distilbert-base-uncased
+num_workers:
+    value: 0
+seed:
+    value: 42
+wandb_project:
+    value: fake-news-detection
+wandb_run:
+    value: null
+warmup_ratio:
+    value: 0.1
+weight_decay:
+    value: 0.01
