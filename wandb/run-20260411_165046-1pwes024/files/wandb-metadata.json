@@ -1,18 +1,24 @@
 {
   "os": "Windows-10-10.0.26200-SP0",
   "python": "CPython 3.11.9",
-  "startedAt": "2026-04-10T09:19:25.195722Z",
+  "startedAt": "2026-04-11T09:50:46.867635Z",
+  "args": [
+    "--model",
+    "distilbert-base-uncased",
+    "--epochs",
+    "3"
+  ],
   "program": "C:\\1_Workspace\\4_Nam_4\\2_HocKy_252\\4_DL\\2_BTL\\Fake-News\\train.py",
   "codePath": "train.py",
   "codePathLocal": "train.py",
   "git": {
     "remote": "https://github.com/Brozic2908/Fake-News.git",
-    "commit": "978d87c0caf795afb0509d887262fe835c6bc52c"
+    "commit": "f84dd26669799e665fca5ae8f8735eacda5bbf16"
   },
   "email": "nlqk2908@gmail.com",
   "root": "C:\\1_Workspace\\4_Nam_4\\2_HocKy_252\\4_DL\\2_BTL\\Fake-News",
   "host": "LAPTOP-BE44K422",
-  "executable": "C:\\1_Workspace\\4_Nam_4\\2_HocKy_252\\4_DL\\2_BTL\\Fake-News\\venv\\Scripts\\python.exe",
+  "executable": "C:\\Users\\khanh\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
   "cpu_count": 6,
   "cpu_count_logical": 12,
   "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
@@ -20,7 +26,7 @@
   "disk": {
     "/": {
       "total": "510852591616",
-      "used": "315377434624"
+      "used": "342292201472"
     }
   },
   "memory": {
@@ -36,5 +42,5 @@
     }
   ],
   "cudaVersion": "13.0",
-  "writerId": "e5i3ukuvsbmse9ulnkjk6nyar1o2llfb"
+  "writerId": "ldguz1tx3dszca3sn38qdfhe4jpaz6z0"
 }

@@ -33,7 +33,7 @@ def parse_args() -> argparse.Namespace:
 
     p.add_argument("--model",       type=str,   default="distilbert-base-uncased",
                    help="HuggingFace model name (distilbert / bert-base-uncased / roberta-base)")
-    p.add_argument("--max_len",     type=int,   default=256,  help="Max token length")
+    p.add_argument("--max_len",     type=int,   default=512,  help="Max token length")
     p.add_argument("--batch_size",  type=int,   default=32,   help="Batch size")
     p.add_argument("--epochs",      type=int,   default=1,    help="Số epoch")
     p.add_argument("--lr",          type=float, default=2e-5, help="Learning rate")
@@ -115,7 +115,8 @@ def main() -> None:
     print(f"{'='*55}\n")
 
     # ── WandB ──────────────────────────────────
-    run_name = args.wandb_run or f"{args.model.split('/')[-1]}_ep{args.epochs}_lr{args.lr}"
+    model_slug = args.model.split("/")[-1]   # vd: "roberta-base"
+    run_name   = args.wandb_run or f"{model_slug}_ep{args.epochs}_lr{args.lr}"
     wandb.init(
         project = args.wandb_project,
         name    = run_name,
@@ -163,7 +164,8 @@ def main() -> None:
     # ── Checkpoint dir ─────────────────────────
     os.makedirs(args.ckpt_dir, exist_ok=True)
     best_val_loss = float("inf")
-    best_ckpt     = os.path.join(args.ckpt_dir, "best_model.pt")
+    ckpt_name  = f"best_{model_slug}_ep{args.epochs}_lr{args.lr}.pt"
+    best_ckpt  = os.path.join(args.ckpt_dir, ckpt_name)
 
     # ── Training loop ──────────────────────────
     for epoch in range(1, args.epochs + 1):
@@ -194,7 +196,9 @@ def main() -> None:
 
         # Lưu best checkpoint theo val_loss
         if val_m["loss"] < best_val_loss:
-            best_val_loss = val_m["loss"]
+            best_val_loss  = val_m["loss"]
+            best_val_f1    = val_m["f1"]
+            best_val_acc   = val_m["accuracy"]
             torch.save(
                 {
                     "epoch"      : epoch,
@@ -202,12 +206,19 @@ def main() -> None:
                     "state_dict" : model.state_dict(),
                     "val_loss"   : best_val_loss,
                     "val_f1"     : val_m["f1"],
+                    "val_accuracy": val_m["accuracy"],
                     "args"       : vars(args),
                 },
                 best_ckpt,
             )
             print(f"  ✅ Best checkpoint saved → {best_ckpt}  (val_loss={best_val_loss:.4f})")
 
+    # ── WandB summary — hiện ở cột ngoài cùng bảng so sánh các run ──
+    wandb.summary["best_val_loss"]     = best_val_loss
+    wandb.summary["best_val_f1"]       = best_val_f1
+    wandb.summary["best_val_accuracy"] = best_val_acc
+    wandb.summary["checkpoint"]        = best_ckpt
+    
     print(f"\n🏁 Training hoàn tất. Best val_loss = {best_val_loss:.4f}")
     wandb.finish()
 
