@@ -59,7 +59,8 @@ def parse_args() -> argparse.Namespace:
                    help="Bật mixed precision (AMP) để giảm VRAM và tăng tốc")
     p.add_argument("--grad_accum_steps", type=int, default=1,
                    help="Gradient accumulation steps")
-
+    p.add_argument("--wandb_entity", type=str, default=None,
+                   help="WandB entity (username hoặc team name)")
     return p.parse_args()
 
 
@@ -195,6 +196,7 @@ def main() -> None:
     run_name = args.wandb_run or f"{model_slug}_ep{args.epochs}_lr{args.lr}"
     wandb.init(
         project=args.wandb_project,
+        entity=args.wandb_entity,
         name=run_name,
         config={**vars(args), "detected_gpu_count": gpu_count, "gpu_names": gpu_names},
     )
