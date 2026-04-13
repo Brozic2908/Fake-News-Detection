@@ -6,31 +6,21 @@ Dự án này ứng dụng các mô hình ngôn ngữ lớn (Transformers như B
 
 ```text
 fake-news-detection/
-│
-├── data/                   # Chứa dữ liệu (Thành viên 1 quản lý)
-│   ├── raw/                # Dữ liệu gốc tải về từ Hugging Face
-│   └── processed/          # Dữ liệu đã qua tiền xử lý (nếu có lưu lại)
-│
-├── models/                 # Chứa code định nghĩa mạng Nơ-ron (Thành viên 2)
-│   ├── __init__.py
-│   └── fake_news_model.py  # Định nghĩa class FakeNewsClassifier (DistilBERT + Head)
-│
-├── dataset/                # Chứa code xử lý dữ liệu (Thành viên 1)
-│   ├── __init__.py
-│   └── data_loader.py      # Định nghĩa class FakeNewsDataset và hàm get_dataloaders
-│
-├── utils/                  # Các hàm tiện ích dùng chung
-│   ├── __init__.py
-│   └── metrics.py          # Hàm tính F1-score, vẽ Confusion Matrix (Thành viên 3)
-│
-├── checkpoints/            # Nơi lưu trữ trọng số mô hình tốt nhất (.pt / .pth)
-│
-├── train.py                # Script chính để chạy huấn luyện (Thành viên 2 & 3)
-├── evaluate.py             # Script đánh giá mô hình trên tập test (Thành viên 3)
-├── inference.py            # Script chạy thử với một đoạn tin tức bất kỳ (Thành viên 3)
-│
-├── requirements.txt        # Danh sách các thư viện cần cài đặt
-└── README.md               # Hướng dẫn chạy code và phân công công việc
+├── data/
+│   ├── raw/                 # Dữ liệu gốc từ Hugging Face
+│   └── processed/           # Dữ liệu đã tiền xử lý
+├── models/
+│   └── fake_news_model.py   # Định nghĩa kiến trúc Transformer
+├── dataset/
+│   └── data_loader.py       # Xử lý Tokenizer và DataLoader
+├── utils/
+│   └── metrics.py           # Các hàm bổ trợ tính toán chỉ số
+├── checkpoints/             # Nơi lưu trữ trọng số mô hình tốt nhất (.pt)
+├── train.py                 # Script huấn luyện chính
+├── evaluate.py              # Script đánh giá model
+├── inference.py             # Script dự đoán thực tế
+├── requirements.txt         # Danh sách thư viện cần thiết
+└── README.md                # Hướng dẫn dự án
 ```
 
 ---
@@ -63,6 +53,10 @@ python models/fake_news_model.py
 python train.py --model distilbert-base-uncased --epochs 4
 # hoặc dùng RoBERTa
 python train.py --model roberta-base --epochs 5 --lr 2e-5
+
+# Bước 5: Đánh giá
+python evaluate.py
+python inference.py --text "Nhap cau tin tuc vao day"
 ```
 
 **2. Quy trình chạy script**
@@ -110,4 +104,4 @@ python train.py --model roberta-base --epochs 5 --lr 2e-5
 -  **Thành viên 3:** Chụp ảnh log từ Wandb, vẽ biểu đồ, viết phân tích đánh giá hiệu năng và so sánh kết quả. 
 -  **Cả nhóm:** Tổng hợp source code, link Wandb, xuất Report/Slide ra PDF và nén thành `Group_XX.zip` để nộp.
 
-🔗 **Link Wandb Public:** `[Chèn link Wandb của nhóm vào đây]`
+🔗 **Link Wandb Public:** https://wandb.ai/khang-nguyenminh2k4-ho-chi-minh-city-university-of-techn/fake-news-detection/
