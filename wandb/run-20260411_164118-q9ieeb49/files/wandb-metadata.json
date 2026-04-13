@@ -1,0 +1,52 @@
+{
+  "os": "Windows-10-10.0.26200-SP0",
+  "python": "CPython 3.11.15",
+  "startedAt": "2026-04-11T09:41:18.026370Z",
+  "args": [
+    "--model",
+    "distilbert-base-uncased",
+    "--epochs",
+    "3",
+    "--lr",
+    "2e-5",
+    "--batch_size",
+    "32",
+    "--dropout",
+    "0.3"
+  ],
+  "program": "C:\\1_Workspace\\4_Nam_4\\2_HocKy_252\\4_DL\\2_BTL\\Fake-News\\train.py",
+  "codePath": "train.py",
+  "codePathLocal": "train.py",
+  "git": {
+    "remote": "https://github.com/Brozic2908/Fake-News.git",
+    "commit": "f84dd26669799e665fca5ae8f8735eacda5bbf16"
+  },
+  "email": "nlqk2908@gmail.com",
+  "root": "C:\\1_Workspace\\4_Nam_4\\2_HocKy_252\\4_DL\\2_BTL\\Fake-News",
+  "host": "LAPTOP-BE44K422",
+  "executable": "C:\\Users\\khanh\\miniconda3\\envs\\ai_env\\python.exe",
+  "cpu_count": 6,
+  "cpu_count_logical": 12,
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "510852591616",
+      "used": "336122064896"
+    }
+  },
+  "memory": {
+    "total": "33656905728"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce RTX 3050 Laptop GPU",
+      "memoryTotal": "4294967296",
+      "cudaCores": 2048,
+      "architecture": "Ampere",
+      "uuid": "GPU-6264e186-479d-13cc-ec80-99df64eec5d0"
+    }
+  ],
+  "cudaVersion": "13.0",
+  "writerId": "m3yyehr9xax0gz953h5b39qqgs0qdfnn"
+}
